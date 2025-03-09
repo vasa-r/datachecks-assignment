@@ -6,9 +6,10 @@ const PageLoader = () => {
     <div className="h-svh w-full center bg-vio">
       <RiseLoader
         color="#7f22fe"
-        size={150}
+        size={100}
         aria-label="Loading Spinner"
         data-testid="loader"
+        margin={10}
       />
     </div>
   );
