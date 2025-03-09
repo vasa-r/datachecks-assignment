@@ -148,3 +148,12 @@
   @apply flex items-center justify-center;
 }
 /* #009689 */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
