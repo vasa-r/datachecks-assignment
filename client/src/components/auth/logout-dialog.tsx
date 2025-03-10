@@ -10,7 +10,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-// import { useAuth } from "@/context/auth-context";
+import { useAuth } from "@/context/auth-context";
 
 export function LogoutDialog({
   open,
@@ -19,12 +19,12 @@ export function LogoutDialog({
   open: boolean;
   setOpen: (val: boolean) => void;
 }) {
-  // const { logout } = useAuth();
+  const { logout } = useAuth();
 
-  // const handleLogout = () => {
-  //   logout();
-  //   setOpen(false);
-  // };
+  const handleLogout = () => {
+    logout();
+    setOpen(false);
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -39,7 +39,7 @@ export function LogoutDialog({
           <AlertDialogCancel onClick={() => setOpen(false)}>
             Cancel
           </AlertDialogCancel>
-          <Button variant="destructive" onClick={() => {}} text="dialog">
+          <Button variant="destructive" onClick={handleLogout} text="dialog">
             Logout
           </Button>
         </AlertDialogFooter>
