@@ -113,3 +113,21 @@ export const updateBlogById = async (
     };
   }
 };
+
+export const deleteBlogById = async (id: string) => {
+  try {
+    const response = await apiClient.delete(`/blog/${id}`);
+    return {
+      success: true,
+      data: response.data,
+      status: response.status,
+    };
+  } catch (error) {
+    const err = error as AxiosError;
+    return {
+      success: false,
+      data: err.response?.data || "An error occurred while deleting the blog",
+      status: err.response?.status || 500,
+    };
+  }
+};

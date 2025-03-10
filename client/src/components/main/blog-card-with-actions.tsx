@@ -6,6 +6,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import TooltipWrapper from "../tooltip-wrapper";
 import { Blog } from "@/types/types";
 import Link from "next/link";
+import { DeleteDialog } from "./delete-dialog";
 
 interface BlogActionsProps {
   blog: Blog;
@@ -33,16 +34,19 @@ const blogCardWithActions = (BlogCard: ComponentType<{ blog: Blog }>) => {
             </TooltipWrapper>
           </Link>
 
-          <TooltipWrapper content="Delete your blog">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={onDelete}
-              className="center bg-transparent text-red-500 border-none hover:text-red-500 cursor-pointer"
-            >
-              <Trash2 className="size-4" />
-            </Button>
-          </TooltipWrapper>
+          <DeleteDialog
+            triggerLabel={
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onDelete}
+                className="center bg-transparent text-red-500 border-none hover:text-red-500 cursor-pointer"
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            }
+            tableId={blog.id}
+          />
         </div>
       </div>
     );
