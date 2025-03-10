@@ -17,7 +17,6 @@ def create_user(request: schemas.User, db: Session = Depends(get_db)):
     return user.create(request, db)
 
 
-@router.post("/signin")
+@router.post("/signin", status_code=status.HTTP_200_OK)
 def login_user(request: schemas.LoginUser, db: Session = Depends(get_db)):
-    print(request)
     return user.login(request, db)
