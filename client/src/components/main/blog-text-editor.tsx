@@ -23,12 +23,14 @@ import {
   AlignJustify,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 interface BlogEditorProps {
   onChange?: (content: string) => void;
+  value?: string;
 }
 
-const BlogEditor: React.FC<BlogEditorProps> = ({ onChange }) => {
+const BlogEditor: React.FC<BlogEditorProps> = ({ onChange, value }) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -45,10 +47,19 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onChange }) => {
     },
   });
 
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value!);
+    }
+  }, [value, editor]);
+
   if (!editor) return <p>Loading editor...</p>;
 
   return (
-    <div className="border rounded-md p-2">
+    <div
+      className="border rounded-md p-2"
+      onMouseDown={(e) => e.stopPropagation()}
+    >
       <div className="flex gap-2 mb-2 border-b pb-2 flex-wrap">
         <ToolbarButton
           editor={editor}
@@ -159,6 +170,8 @@ const ToolbarButton = ({
       size="sm"
       className="p-2"
       variant={isActive ? "default" : "outline"}
+      type="button"
+      onMouseDown={(e) => e.preventDefault()}
       onClick={command}
     >
       {children}

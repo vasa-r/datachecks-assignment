@@ -9,21 +9,24 @@ import {
 } from "../ui/card";
 import { AspectRatio } from "../ui/aspect-ratio";
 import Image from "next/image";
+import { Blog } from "@/types/types";
+import { getTimeAgo } from "@/lib/utils";
 
-const BlogCard = () => {
+const BlogCard = ({ blog }: { blog: Blog }) => {
+  const validImageUrl = blog.image_url?.startsWith("http")
+    ? blog.image_url
+    : "https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg";
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Title</CardTitle>
-        <CardDescription>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-        </CardDescription>
+        <CardTitle>{blog.title}</CardTitle>
+        <CardDescription>{blog.subtitle}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="w-full">
           <AspectRatio ratio={16 / 9} className="rounded-[3px]">
             <Image
-              src="https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"
+              src={validImageUrl}
               alt="Image"
               className="rounded-md object-cover"
               fill
@@ -34,11 +37,13 @@ const BlogCard = () => {
       <CardFooter className="flex justify-between">
         <div className="flex items-center gap-1.5">
           <div className="rounded-full p-1.5 font-semibold bg-secondary">
-            VA
+            {blog.creator.full_name.substring(0, 2).toUpperCase()}
           </div>
-          <p className="text-sm text-neutral-600">Vasanth</p>
+          <p className="text-sm text-neutral-600">{blog.creator.full_name}</p>
         </div>
-        <p className="text-sm text-neutral-600">4 day ago</p>
+        <p className="text-sm text-neutral-600">
+          {getTimeAgo(blog.created_at)}
+        </p>
       </CardFooter>
     </Card>
   );

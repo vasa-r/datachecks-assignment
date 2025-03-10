@@ -10,10 +10,10 @@ import { Label } from "@/components/ui/label";
 import { RoughNotation } from "react-rough-notation";
 import Link from "next/link";
 import { useState } from "react";
-// import { registerUser } from "@/api/auth";
 import toast from "react-hot-toast";
 import BtnLoader from "@/components/btn-loader";
 import { useRouter } from "next/navigation";
+import { registerUser } from "@/api/auth";
 
 const signupSchema = z
   .object({
@@ -46,22 +46,21 @@ export function SignupForm({
     setLoading(true);
     const { fullName, email, password } = data;
 
-    console.log(fullName, email, password);
-
-    // try {
-    //   const response = await registerUser(userName, email, password);
-    //   if (response.success && response.data) {
-    //     toast.success(response.data?.message || "Signup successful!");
-    //     router.push("signin");
-    //   } else {
-    //     toast.error(response.data.message || "Signup failed. Try again.");
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   toast.error("Something went wrong during signup. Please try again.");
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      const response = await registerUser(fullName, email, password);
+      console.log(response);
+      if (response.success && response.data) {
+        toast.success(response.data?.message || "Signup successful!");
+        router.push("signin");
+      } else {
+        toast.error(response.data.message || "Signup failed. Try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong during signup. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

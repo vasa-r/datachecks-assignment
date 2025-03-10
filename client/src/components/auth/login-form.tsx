@@ -13,6 +13,7 @@ import BtnLoader from "@/components/btn-loader";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
+import { loginUser } from "@/api/auth";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -38,23 +39,22 @@ export function LoginForm({
     setLoading(true);
     const { email, password } = data;
 
-    console.log(email, password);
+    try {
+      const response = await loginUser(email, password);
 
-    // try {
-    //   const response = await loginUser(email, password);
-    //   if (response.success && response.data) {
-    //     const { token, userData, message } = response.data;
-    //     toast.success(message || "Welcome back");
-    //     login(token, userData);
-    //   } else {
-    //     toast.error(response.data.message || "Login failed. Try again.");
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   toast.error("Something went wrong during login. Please try again.");
-    // } finally {
-    //   setLoading(false);
-    // }
+      if (response.success && response.data) {
+        const { token, userData } = response.data;
+        toast.success("Welcome back");
+        login(token, userData);
+      } else {
+        toast.error(response.data.message || "Login failed. Try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong during login. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

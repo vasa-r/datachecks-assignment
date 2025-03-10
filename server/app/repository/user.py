@@ -64,4 +64,10 @@ def login(request: schemas.LoginUser, db: Session):
 
     access_token = jwtToken.create_access_token(data={"sub": user.email, "id": user.id})
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "token": access_token,
+        "userData": {
+            "userName": user.full_name,
+            "email": user.email,
+        },
+    }

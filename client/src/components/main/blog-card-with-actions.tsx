@@ -4,29 +4,34 @@ import React, { ComponentType } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import TooltipWrapper from "../tooltip-wrapper";
+import { Blog } from "@/types/types";
+import Link from "next/link";
 
 interface BlogActionsProps {
+  blog: Blog;
   onEdit: () => void;
   onDelete: () => void;
 }
 
-const blogCardWithActions = (BlogCard: ComponentType) => {
-  const WrappedComponent = ({ onEdit, onDelete }: BlogActionsProps) => {
+const blogCardWithActions = (BlogCard: ComponentType<{ blog: Blog }>) => {
+  const WrappedComponent = ({ onEdit, onDelete, blog }: BlogActionsProps) => {
     return (
       <div className="relative">
-        <BlogCard />
+        <BlogCard blog={blog} />
 
         <div className="absolute top-2 right-2 flex gap-2">
-          <TooltipWrapper content="Edit your blog" side="left">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={onEdit}
-              className="center bg-transparent text-blue-800 border-none cursor-pointer"
-            >
-              <Pencil className="size-4" />
-            </Button>
-          </TooltipWrapper>
+          <Link href={`/blog/${blog.id}`}>
+            <TooltipWrapper content="Edit your blog" side="left">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onEdit}
+                className="center bg-transparent text-blue-800 border-none cursor-pointer"
+              >
+                <Pencil className="size-4" />
+              </Button>
+            </TooltipWrapper>
+          </Link>
 
           <TooltipWrapper content="Delete your blog">
             <Button

@@ -52,9 +52,8 @@ def create(req: schemas.CreateBlogReq, db: Session, user_id: str):
 
 
 def get_all_blogs(db: Session):
-
     try:
-        blogs = db.query(models.Blog).all()
+        blogs = db.query(models.Blog).order_by(models.Blog.created_at.desc()).all()
 
         if not blogs:
             raise HTTPException(

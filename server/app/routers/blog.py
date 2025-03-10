@@ -7,7 +7,7 @@ import jwtToken
 from typing import List
 
 router = APIRouter(
-    prefix="/blogs",
+    prefix="/blog",
     tags=["Blogs"],
     dependencies=[Depends(jwtToken.get_current_user)],
 )
