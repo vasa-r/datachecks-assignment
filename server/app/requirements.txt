@@ -7,3 +7,4 @@ bcrypt
 pyjwt
 gunicorn
 psycopg2-binary
+uvicorn
