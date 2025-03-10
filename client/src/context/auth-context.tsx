@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("blogi_token");
     const storedUser = localStorage.getItem("user");
 
     if (storedToken && storedUser) {
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const login = (token: string, userData: User) => {
-    localStorage.setItem("token", token);
+    localStorage.setItem("blogi_token", token);
     localStorage.setItem("user", JSON.stringify(userData));
     setToken(token);
     setUser(userData);
