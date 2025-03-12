@@ -33,6 +33,38 @@ class CreateBlogReq(BaseModel):
         from_attributes = True
 
 
+class Meta(BaseModel):
+    total_blogs: int
+    skip: int
+    limit: int
+
+    class Config:
+        from_attributes: True
+
+
+class CreateBlogRes(BaseModel):
+    id: UUID
+    title: str
+    subtitle: str
+    image_url: str
+    content: str
+    user_id: UUID
+    creator: CreateUser
+    created_at: datetime | None = None
+
+    class Config:
+        from_attributes = True
+        json_encoders = {datetime: lambda v: v.astimezone(UTC).isoformat()}
+
+
+class AllBlogLimitRes(BaseModel):
+    meta: Meta
+    blogs: list[CreateBlogRes]
+
+    class Config:
+        from_attributes = True
+
+
 class CreateBlogRes(BaseModel):
     id: UUID
     title: str

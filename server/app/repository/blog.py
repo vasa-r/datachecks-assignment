@@ -51,9 +51,19 @@ def create(req: schemas.CreateBlogReq, db: Session, user_id: str):
         )
 
 
-def get_all_blogs(db: Session):
+def get_all_blogs(db: Session, skip, limit):
+
     try:
-        blogs = db.query(models.Blog).order_by(models.Blog.created_at.desc()).all()
+
+        total_blogs = db.query(models.Blog).count()
+
+        blogs = (
+            db.query(models.Blog)
+            .order_by(models.Blog.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
         if not blogs:
             raise HTTPException(
@@ -61,7 +71,7 @@ def get_all_blogs(db: Session):
                 detail="No blogs found.",
             )
 
-        return [
+        blog_list = [
             schemas.CreateBlogRes(
                 id=blog.id,
                 title=blog.title,
@@ -80,6 +90,13 @@ def get_all_blogs(db: Session):
             )
             for blog in blogs
         ]
+
+        response_data = schemas.AllBlogLimitRes(
+            meta=schemas.Meta(total_blogs=total_blogs, skip=skip, limit=limit),
+            blogs=blog_list,
+        )
+
+        return response_data
 
     except Exception as e:
         raise HTTPException(
@@ -122,9 +139,13 @@ def get_by_id(blog_id: str, db: Session):
         )
 
 
-def get_user_blogs(db: Session, user_id: str):
-    """Fetch all blogs for a specific user with proper error handling."""
+def get_user_blogs(db: Session, user_id: str, skip, limit):
+
     try:
+        total_user_blogs = db.query(models.Blog).filter(
+            models.Blog.user_id == UUID(user_id)
+        )
+
         blogs = db.query(models.Blog).filter(models.Blog.user_id == UUID(user_id)).all()
 
         if not blogs:
@@ -133,7 +154,7 @@ def get_user_blogs(db: Session, user_id: str):
                 detail="No blogs found for this user.",
             )
 
-        return [
+        blog_list = [
             schemas.CreateBlogRes(
                 id=blog.id,
                 title=blog.title,
@@ -153,6 +174,13 @@ def get_user_blogs(db: Session, user_id: str):
             for blog in blogs
         ]
 
+        response_data = schemas.AllBlogLimitRes(
+            meta=schemas.Meta(total_blogs=total_user_blogs, skip=skip, limit=limit),
+            blogs=blog_list,
+        )
+
+        return response_data
+
     except SQLAlchemyError as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -161,7 +189,7 @@ def get_user_blogs(db: Session, user_id: str):
 
 
 def delete_blog(blog_id: str, db: Session, user_id: str):
-    """Delete a blog by ID (only if the user is the owner) with proper error handling."""
+
     try:
         blog = db.query(models.Blog).filter(models.Blog.id == UUID(blog_id)).first()
 
@@ -190,7 +218,7 @@ def delete_blog(blog_id: str, db: Session, user_id: str):
 
 
 def update_blog(blog_id: str, db: Session, user_id: str, update_data: dict):
-    """Update a blog by ID (only if the user is the owner) with proper error handling."""
+
     try:
         blog = db.query(models.Blog).filter(models.Blog.id == UUID(blog_id)).first()
 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session
 import schemas
 import repository.blog as blog_repo
@@ -26,10 +26,14 @@ def create_blog(
 
 
 @router.get(
-    "/all", response_model=List[schemas.CreateBlogRes], status_code=status.HTTP_200_OK
+    "/all", response_model=schemas.AllBlogLimitRes, status_code=status.HTTP_200_OK
 )
-def get_blogs(db: Session = Depends(get_db)):
-    return blog_repo.get_all_blogs(db)
+def get_blogs(
+    db: Session = Depends(get_db),
+    skip: int = Query(0),
+    limit: int = Query(10),
+):
+    return blog_repo.get_all_blogs(db, skip, limit)
 
 
 @router.get(
@@ -38,9 +42,12 @@ def get_blogs(db: Session = Depends(get_db)):
     status_code=status.HTTP_200_OK,
 )
 def get_blogs(
-    db: Session = Depends(get_db), user_id=Depends(jwtToken.get_current_user)
+    db: Session = Depends(get_db),
+    user_id=Depends(jwtToken.get_current_user),
+    skip: int = Query(0),
+    limit: int = Query(10),
 ):
-    return blog_repo.get_user_blogs(db, user_id)
+    return blog_repo.get_user_blogs(db, user_id, skip, limit)
 
 
 @router.get(
