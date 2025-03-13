@@ -142,11 +142,17 @@ def get_by_id(blog_id: str, db: Session):
 def get_user_blogs(db: Session, user_id: str, skip, limit):
 
     try:
-        total_user_blogs = db.query(models.Blog).filter(
-            models.Blog.user_id == UUID(user_id)
+        total_user_blogs = (
+            db.query(models.Blog).filter(models.Blog.user_id == UUID(user_id)).count()
         )
-
-        blogs = db.query(models.Blog).filter(models.Blog.user_id == UUID(user_id)).all()
+        print(f"user blogs count {total_user_blogs}")
+        blogs = (
+            db.query(models.Blog)
+            .filter(models.Blog.user_id == UUID(user_id))
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
         if not blogs:
             raise HTTPException(

@@ -38,7 +38,7 @@ def get_blogs(
 
 @router.get(
     "/user-blogs",
-    response_model=List[schemas.CreateBlogRes],
+    response_model=schemas.AllBlogLimitRes,
     status_code=status.HTTP_200_OK,
 )
 def get_blogs(
