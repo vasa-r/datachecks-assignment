@@ -13,10 +13,10 @@ export default function AuthLayout({ children }: AuthLayout) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("blogi_token");
 
     if (token) {
-      router.replace("/dashboard");
+      router.replace("/articles");
     } else {
       setLoading(false);
     }

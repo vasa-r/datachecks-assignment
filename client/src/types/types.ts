@@ -11,3 +11,12 @@ export interface Blog {
     email: string;
   };
 }
+
+export interface BlogsResponse {
+  success: boolean;
+  status?: number;
+  data: {
+    blogs: Blog[];
+    meta: { limit: number; skip: number; total_blogs: number };
+  };
+}

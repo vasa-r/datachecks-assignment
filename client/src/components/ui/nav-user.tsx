@@ -18,14 +18,16 @@ import {
 } from "@/components/ui/sidebar";
 import { LogoutDialog } from "../auth/logout-dialog";
 import { useState } from "react";
+import { useAuth } from "@/context/auth-context";
 
-interface User {
-  userName: string;
-  email: string;
-}
+// interface User {
+//   userName: string;
+//   email: string;
+// }
 
-export function NavUser({ user }: { user: User | null }) {
+export function NavUser() {
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <SidebarMenu>

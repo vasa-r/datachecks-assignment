@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/auth-context";
+import QueryProvider from "@/providers/react-query";
+import React from "react";
 
 const poppinsFont = Poppins({
   variable: "--font-poppins",
@@ -37,16 +39,18 @@ export default function RootLayout({
       <body
         className={`${poppinsFont.variable} ${meriendaFont.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>{children}</AuthProvider>
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AuthProvider>{children}</AuthProvider>
 
-          <Toaster toastOptions={{ duration: 4000 }} />
-        </ThemeProvider>
+            <Toaster toastOptions={{ duration: 4000 }} />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

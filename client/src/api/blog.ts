@@ -30,9 +30,11 @@ export const createBlog = async (
   }
 };
 
-export const getAllBlogs = async () => {
+export const getAllBlogs = async (skip: number, limit: number = 10) => {
   try {
-    const response = await apiClient.get(`/blog/all`);
+    const response = await apiClient.get(
+      `/blog/all?skip=${skip}&limit=${limit}`
+    );
 
     return {
       success: true,
@@ -49,9 +51,11 @@ export const getAllBlogs = async () => {
   }
 };
 
-export const getUserBlogs = async () => {
+export const getUserBlogs = async (skip: number, limit: number = 10) => {
   try {
-    const response = await apiClient.get(`/blog/user-blogs`);
+    const response = await apiClient.get(
+      `/blog/user-blogs?skip=${skip}&limit=${limit}`
+    );
 
     return {
       success: true,

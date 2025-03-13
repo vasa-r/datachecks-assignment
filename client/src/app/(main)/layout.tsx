@@ -1,22 +1,43 @@
-import { AppSidebar, user } from "@/components/app-sidebar";
+"use client";
+
+import { AppSidebar } from "@/components/app-sidebar";
+import PageLoader from "@/components/page-loader";
 import { ModeToggle } from "@/components/toggle-theme";
 import { NavUser } from "@/components/ui/nav-user";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { BookOpenText } from "lucide-react";
 import Link from "next/link";
-import { ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { ReactNode, useEffect, useState } from "react";
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("blogi_token");
+
+    if (!token) {
+      router.replace("/signin");
+    } else {
+      setLoading(false);
+    }
+  }, [router]);
+
+  if (loading) return <PageLoader />;
   return (
     <SidebarProvider>
       <div className="md:max-w-[65%] w-full mx-auto py-2 px-4 md:py-4 md:px-5 flex flex-col">
         <header className="flex items-center justify-between py-3 border-b border-border fixed top-0 left-0 w-full bg-background z-50 px-4 md:px-[17.5%]">
-          <div className="items-center gap-2 font-medium hidden md:flex">
+          <Link
+            href={"/"}
+            className="items-center gap-2 font-medium hidden md:flex"
+          >
             <div className="bg-logo-bg text-sidebar-primary-foreground flex size-6 items-center justify-center rounded-md">
               <BookOpenText className="size-4" />
             </div>
             <h2 className="font-merienda text-xl font-semibold">Blogi</h2>
-          </div>
+          </Link>
           <div className="md:hidden">
             <SidebarTrigger size="lg" />
           </div>
@@ -28,7 +49,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
             >
               Your Blogs
             </Link>
-            <NavUser user={user} />
+            <NavUser />
           </div>
           <div className="md:hidden">
             <ModeToggle />

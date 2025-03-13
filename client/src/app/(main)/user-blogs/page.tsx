@@ -1,65 +1,95 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import BlogCard from "@/components/main/blog-card";
 import blogCardWithActions from "@/components/main/blog-card-with-actions";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { Blog } from "@/types/types";
+import { BlogsResponse } from "@/types/types";
 import { getUserBlogs } from "@/api/blog";
 import PageLoader from "@/components/page-loader";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const BlogCardWithAction = blogCardWithActions(BlogCard);
 
+const PAGE_SIZE = 10;
+
 const UserBlogs = () => {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [curPage, setCurPage] = useState(1);
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      const response = await getUserBlogs();
-      if (response.success) {
-        setBlogs(response.data);
-      } else {
-        console.error("Error fetching blogs:", response.data);
-      }
-      setLoading(false);
-    };
+  const queryClient = useQueryClient();
 
-    fetchBlogs();
-  }, []);
+  const { data, isLoading } = useQuery<BlogsResponse>({
+    queryKey: ["user_blogs", curPage],
+    queryFn: async () => {
+      const cachedData = queryClient.getQueryData<BlogsResponse>([
+        "user_blogs",
+        curPage,
+      ]);
+      if (cachedData) return cachedData;
 
-  const handleEdit = (id: string) => {
-    console.log("Edit blog:", id);
-  };
+      const response = await getUserBlogs((curPage - 1) * PAGE_SIZE, PAGE_SIZE);
 
-  const handleDelete = (id: string) => {
-    console.log("Delete blog:", id);
-  };
+      queryClient.setQueryData(["user_blogs", curPage], response);
+
+      return response;
+    },
+    placeholderData: (oldData) => oldData,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const userBlogs = useMemo(() => data?.data.blogs, [data]);
+
+  const totalPages = useMemo(
+    () => Math.ceil((data?.data.meta?.total_blogs ?? 1) / PAGE_SIZE),
+    [data]
+  );
 
   return (
     <div className="flex flex-col gap-3">
-      <Link href={"/articles"}>
-        <Button variant="outline">
+      <Link href={"/articles"} className="w-fit">
+        <Button variant="outline" className="cursor-pointer">
           <ArrowLeft size={24} />
         </Button>
       </Link>
 
-      {loading ? (
+      {isLoading ? (
         <PageLoader />
-      ) : blogs.length === 0 ? (
-        <p className="text-center text-gray-500">No blogs found.</p>
+      ) : !data?.success ? (
+        <p className="text-center text-gray-500">
+          No blogs found. Please{" "}
+          <Link
+            href={"/blog"}
+            className="text-foreground underline underline-offset-2"
+          >
+            create one
+          </Link>{" "}
+          .
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {blogs.map((blog) => (
-            <BlogCardWithAction
-              key={blog.id}
-              blog={blog}
-              onEdit={() => handleEdit(blog.id)}
-              onDelete={() => handleDelete(blog.id)}
-            />
+          {userBlogs?.map((blog) => (
+            <Link href={`/blog/article/${blog.id}`} key={blog.id}>
+              <BlogCardWithAction blog={blog} />
+            </Link>
           ))}
+        </div>
+      )}
+      {data?.success && (
+        <div className="flex items-center justify-center gap-2.5">
+          <Button
+            onClick={() => setCurPage((prev) => Math.max(prev - 1, 1))}
+            disabled={curPage === 1}
+          >
+            <ChevronLeft />
+          </Button>
+          <Button
+            onClick={() => setCurPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={curPage === totalPages}
+          >
+            <ChevronRight />
+          </Button>
         </div>
       )}
     </div>

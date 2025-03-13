@@ -34,11 +34,6 @@ const items = [
   },
 ];
 
-export const user = {
-  userName: "vasa",
-  email: "vasa@mail.com",
-};
-
 export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
@@ -69,7 +64,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );

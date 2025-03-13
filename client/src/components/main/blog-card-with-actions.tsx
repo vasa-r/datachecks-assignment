@@ -10,12 +10,10 @@ import { DeleteDialog } from "./delete-dialog";
 
 interface BlogActionsProps {
   blog: Blog;
-  onEdit: () => void;
-  onDelete: () => void;
 }
 
 const blogCardWithActions = (BlogCard: ComponentType<{ blog: Blog }>) => {
-  const WrappedComponent = ({ onEdit, onDelete, blog }: BlogActionsProps) => {
+  const WrappedComponent = ({ blog }: BlogActionsProps) => {
     return (
       <div className="relative">
         <BlogCard blog={blog} />
@@ -26,7 +24,6 @@ const blogCardWithActions = (BlogCard: ComponentType<{ blog: Blog }>) => {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={onEdit}
                 className="center bg-transparent text-blue-800 border-none cursor-pointer"
               >
                 <Pencil className="size-4" />
@@ -39,7 +36,6 @@ const blogCardWithActions = (BlogCard: ComponentType<{ blog: Blog }>) => {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={onDelete}
                 className="center bg-transparent text-red-500 border-none hover:text-red-500 cursor-pointer"
               >
                 <Trash2 className="size-4" />
