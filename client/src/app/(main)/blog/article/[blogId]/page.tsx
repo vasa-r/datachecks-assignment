@@ -74,6 +74,8 @@ const BlogPage = () => {
               alt={blog.title}
               fill
               className="object-cover rounded-lg shadow-md"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority
             />
           </div>
           <Separator />

@@ -20,6 +20,7 @@ import { createBlog } from "@/api/blog";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const blogSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -47,19 +48,29 @@ const Blog = () => {
 
   const router = useRouter();
 
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: async (data: z.infer<typeof blogSchema>) =>
+      createBlog(data.title, data.subtitle, data.imageUrl, data.content),
+    onSuccess: async (response) => {
+      if (response.success) {
+        toast.success("Blog published successfully!");
+
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["all_blogs"] }),
+          queryClient.invalidateQueries({ queryKey: ["user_blogs"] }),
+        ]);
+
+        router.push("/user-blogs");
+      } else {
+        toast.error("Blog not published. Try again later.");
+      }
+    },
+  });
+
   const onSubmit = async (data: z.infer<typeof blogSchema>) => {
-    const response = await createBlog(
-      data.title,
-      data.subtitle,
-      data.imageUrl,
-      data.content
-    );
-    if (response.success) {
-      toast.success("Blog published successfully!");
-      router.push("/user-blogs");
-    } else {
-      toast.error(response.data);
-    }
+    mutate(data);
   };
 
   return (

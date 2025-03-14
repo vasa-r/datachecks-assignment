@@ -70,9 +70,7 @@ const UserBlogs = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {userBlogs?.map((blog) => (
-            <Link href={`/blog/article/${blog.id}`} key={blog.id}>
-              <BlogCardWithAction blog={blog} />
-            </Link>
+            <BlogCardWithAction key={blog.id} blog={blog} />
           ))}
         </div>
       )}

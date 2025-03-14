@@ -30,7 +30,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       <div className="md:max-w-[65%] w-full mx-auto py-2 px-4 md:py-4 md:px-5 flex flex-col">
         <header className="flex items-center justify-between py-3 border-b border-border fixed top-0 left-0 w-full bg-background z-50 px-4 md:px-[17.5%]">
           <Link
-            href={"/"}
+            href={"/articles"}
             className="items-center gap-2 font-medium hidden md:flex"
           >
             <div className="bg-logo-bg text-sidebar-primary-foreground flex size-6 items-center justify-center rounded-md">

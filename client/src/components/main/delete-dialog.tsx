@@ -59,7 +59,13 @@ export function DeleteDialog({
           {/* <Button variant="destructive" onClick={() => onDelete} text="dialog">
             Delete
           </Button> */}
-          <AlertDialogAction onClick={handleDelete} disabled={loading}>
+          <AlertDialogAction
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete();
+            }}
+            disabled={loading}
+          >
             {loading ? "Deleting..." : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
