@@ -1,44 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getBlogById } from "@/api/blog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "react-hot-toast";
 import { Blog } from "@/types/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 const BlogPage = () => {
   const { blogId } = useParams();
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["blog", blogId],
+    queryFn: () => getBlogById(blogId as string),
+  });
+
+  const blog: Blog = data?.data;
 
   const validImageUrl = blog?.image_url?.startsWith("http")
     ? blog.image_url
     : "https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg";
 
-  useEffect(() => {
-    if (!blogId) return;
-
-    const fetchBlog = async () => {
-      const response = await getBlogById(blogId as string);
-      if (response.success) {
-        setBlog(response.data);
-      } else {
-        toast.error("Failed to load blog.");
-      }
-      setLoading(false);
-    };
-
-    fetchBlog();
-  }, [blogId]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="max-w-3xl mx-auto p-4 space-y-4">
         <Skeleton className="h-10 w-full" />
