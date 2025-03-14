@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -26,22 +27,25 @@ export function DeleteDialog({
   description,
   tableId,
 }: DeleteDialog) {
-  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const handleDelete = async () => {
-    setLoading(true);
-    const result = await deleteBlogById(tableId);
-    setLoading(false);
+  const queryClient = useQueryClient();
 
-    if (result.success) {
+  const deleteBlog = useMutation({
+    mutationFn: async (tableId: string) => deleteBlogById(tableId),
+    onSuccess: async () => {
       toast.success("Blog deleted successfully!");
-
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["all_blogs"] }),
+        queryClient.invalidateQueries({ queryKey: ["user_blogs"] }),
+      ]);
       setOpen(false);
-    } else {
+    },
+    onError: () => {
       toast.error("Failed to delete blog. Try again.");
-    }
-  };
+    },
+  });
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>{triggerLabel}</AlertDialogTrigger>
@@ -62,11 +66,11 @@ export function DeleteDialog({
           <AlertDialogAction
             onClick={(e) => {
               e.stopPropagation();
-              handleDelete();
+              deleteBlog.mutate(tableId);
             }}
-            disabled={loading}
+            disabled={deleteBlog.isPending}
           >
-            {loading ? "Deleting..." : "Delete"}
+            {deleteBlog.isPending ? "Deleting..." : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
